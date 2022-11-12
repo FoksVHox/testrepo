@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ipl.stil.dk/services/helloworld/v1.0" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" name="HelloWorld" targetNamespace="http://ipl.stil.dk/services/helloworld/v1.0">
+  <wsdl:import location="https://et.integrationsplatformen.dk/services/helloworld/v1.0?wsdl=common-resources/WSPolicy.wsdl" namespace="http://ipl.stil.dk/services/helloworld/v1.0">
+    </wsdl:import>
+  <wsdl:types>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ipl.stil.dk/services/helloworld/v1.0" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/">
+
+  <xsd:import namespace="http://ipl.stil.dk/services/helloworld/v1.0" schemaLocation="https://cdn.schedula.dk/hs.xsd"/>
+
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="ProduceIplErrorResponse">
+    <wsdl:part element="tns:ServiceFaultDetailer" name="response">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ServiceException">
+    <wsdl:part element="tns:ServiceFaultDetailer" name="fault">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="PingRequest">
+    <wsdl:part element="tns:Ping" name="request">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetAliveWithParameterRequest">
+    <wsdl:part element="tns:GetAliveWithParameter" name="request">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ProduceIplErrorRequest">
+    <wsdl:part element="tns:ProduceIplError" name="request">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetAliveWithParameterResponse">
+    <wsdl:part element="tns:GetAliveWithParameterResponse" name="response">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="PingResponse">
+    <wsdl:part element="tns:PingResponse" name="response">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="HelloWorldPortType">
+    <wsdl:operation name="GetAliveWithParameter">
+      <wsdl:input message="tns:GetAliveWithParameterRequest" wsp:PolicyURIs="#AsymmetricX509TokensWithUntPolicy">
+    </wsdl:input>
+      <wsdl:output message="tns:GetAliveWithParameterResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:ServiceException" name="ServiceException">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ProduceIplError">
+      <wsdl:input message="tns:ProduceIplErrorRequest" wsp:PolicyURIs="#AsymmetricX509TokensWithUntPolicy">
+    </wsdl:input>
+      <wsdl:output message="tns:ProduceIplErrorResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:ServiceException" name="ServiceException">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Ping">
+      <wsdl:input message="tns:PingRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:PingResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:ServiceException" name="ServiceException">
+    </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="HelloWorldSoapBinding" type="tns:HelloWorldPortType">
+    <soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Ping">
+      <soap12:operation soapAction="Ping" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ServiceException">
+        <soap12:fault name="ServiceException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetAliveWithParameter">
+      <soap12:operation soapAction="GetAliveWithParameter" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ServiceException">
+        <soap12:fault name="ServiceException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ProduceIplError">
+<wsdl:documentation>
+                Call this operation to trigger service error responses
+            </wsdl:documentation>
+      <soap12:operation soapAction="ProduceIplError" style="document"/>
+      <wsdl:input>
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:fault name="ServiceException">
+        <soap12:fault name="ServiceException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="HelloWorld">
+    <wsdl:port binding="tns:HelloWorldSoapBinding" name="HelloWorldPort">
+      <soap12:address location="https://et.integrationsplatformen.dk/services/helloworld/v1.0"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

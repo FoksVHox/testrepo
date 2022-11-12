@@ -1,0 +1,223 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- This namespace placeholder must be updated when it is imported  --><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ipl.stil.dk/services/helloworld/v1.0" elementFormDefault="qualified" targetNamespace="http://ipl.stil.dk/services/helloworld/v1.0">
+
+    <xs:annotation>
+        <xs:documentation>
+            Common types version 4.0 for Integrationsplatformen.
+        </xs:documentation>
+    </xs:annotation>
+
+    <!-- Common elements -->
+    <xs:element name="Ping">
+        <xs:complexType>
+            <xs:sequence/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="PingResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Status">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="up"/>
+                            <xs:enumeration value="down"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Identifier">
+        <xs:annotation>
+            <xs:documentation>
+                The purpose of this element is to serve to log the transaction:
+                    SystemName - The name of your system
+                    SystemTransactionID - A particular identifier to give the transaction
+                This will make it quicker to retrieve your request from the logs, if something goes wrong.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="SystemName" type="tns:RestrictedString"/>
+                <xs:element name="SystemTransactionID" type="tns:RestrictedString"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="CorrelationID" type="tns:UUIDType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                Integrationsplatformen generates a unique ID for all requests. This element is used to provide the ID
+                for calling systems for better support.
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:complexType abstract="true" name="AbstractServiceFaultDetailer">
+        <xs:annotation>
+            <xs:documentation>
+                The purpose of this type is to provide a base type for error detail types on the IPL service side
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element ref="tns:CorrelationID"/>
+            <xs:element name="Timestamp" type="xs:dateTime"/>
+            <xs:element name="ErrorCode" type="tns:ErrorCodeType"/>
+            <xs:element name="ErrorMessage" type="tns:ErrorMessageType"/>
+            <xs:element minOccurs="0" name="Details" type="tns:DetailsType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="ServiceFaultDetailer">
+        <xs:annotation>
+            <xs:documentation>
+                The purpose of this element is to provide detailed information if an error occurs.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="tns:CorrelationID"/>
+                <xs:element name="Timestamp" type="xs:dateTime"/>
+                <xs:element name="ErrorCode" type="tns:ErrorCodeType"/>
+                <xs:element name="ErrorMessage" type="tns:ErrorMessageType"/>
+                <xs:element minOccurs="0" name="Details" type="tns:DetailsType"/>
+                <xs:element minOccurs="0" name="SourceSystemError" type="tns:SourceSystemErrorTypeV1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="SourceSystemErrorTypeV1">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                The representation of source system errors.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="SourceSystemName" type="xs:string"/>
+            <xs:element minOccurs="0" name="ErrorCode" type="xs:string"/>
+            <xs:element minOccurs="0" name="Details" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ServiceFaultDetailerV2">
+        <xs:annotation>
+            <xs:documentation>
+                 The purpose of this type is to provide backwards compatible detailed information if an error occurs on the source side.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="tns:AbstractServiceFaultDetailer">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="SourceSystemError" type="tns:SourceSystemErrorType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:element name="ServiceFaultDetailerV2" type="tns:ServiceFaultDetailerV2"/>
+
+    <xs:element name="InstitutionNumber" type="tns:InstitutionNumberType">
+        <xs:annotation>
+            <xs:documentation>
+                The purpose of this element is to provide the institution number if the service requires authorization on level
+                Serviceniveau + Dataadgangsniveau.
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <!-- Common types -->
+
+    <xs:simpleType name="RestrictedString">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[A-Za-z\d\-_]+"/>
+            <xs:maxLength value="100"/>
+            <xs:whiteSpace value="collapse"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="UUIDType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                The representation of a UUID.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ErrorCodeType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                The representation of error codes specific to Integrationsplatformen.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="ErrorMessageType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                The representation of error messages specific to Integrationsplatformen.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="DetailsType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                The representation of details in error messages.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+
+    <xs:complexType name="SourceSystemErrorType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                The representation of source system errors.
+                Implicitly, the "Details" and "DetailsList" elements are mutually exclusive,
+                so one or the other is sent, but not both.
+                This is done in order for client generators to work properly with the types as given.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="SourceSystemName" type="xs:string"/>
+            <xs:element name="ErrorCode" type="xs:string"/>
+            <xs:element minOccurs="0" name="Details" type="xs:string"/>
+            <xs:element minOccurs="0" name="DetailsList" type="tns:DetailsListType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="DetailsListType">
+        <xs:annotation>
+            <xs:documentation>
+                This represent the general structure for any source service error message structure
+                with error lists
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" name="Detail">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="Code" type="xs:string"/>
+                        <xs:element minOccurs="0" name="Description" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="InstitutionNumberType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                The representation of allowed institution numbers.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-zA-Z0-9]{6}"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

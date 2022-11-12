@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8'?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ipl.stil.dk/services/helloworld/v1.0" elementFormDefault="qualified" targetNamespace="http://ipl.stil.dk/services/helloworld/v1.0">
+
+    <xs:include schemaLocation="https://et.integrationsplatformen.dk/services/helloworld/v1.0?xsd=common-resources/CommonTypes.xsd"/>
+
+    <xs:element name="GetAliveWithParameter">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="tns:Identifier"/>
+                <xs:element name="InputMessage" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="GetAliveWithParameterResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="tns:Identifier"/>
+                <xs:element name="TestResult" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="ProduceIplError">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="tns:Identifier"/>
+                <xs:element name="Error" type="tns:ErrorType"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:simpleType name="ErrorType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="IPL000001"/>
+            <xs:enumeration value="IPL000002"/>
+            <xs:enumeration value="IPL000003"/>
+            <xs:enumeration value="IPL000004"/>
+            <xs:enumeration value="IPL000005"/>
+            <xs:enumeration value="IPL000006"/>
+            <xs:enumeration value="IPL000007"/>
+            <xs:enumeration value="IPL000008"/>
+            <xs:enumeration value="IPL000009"/>
+            <xs:enumeration value="IPL100001"/>
+            <xs:enumeration value="IPL100002"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>
